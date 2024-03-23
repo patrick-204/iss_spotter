@@ -89,8 +89,8 @@ const fetchCoordsByIP = function(ip, callback) {
  *     [ { risetime: 134564234, duration: 600 }, ... ]
  */
 const fetchISSFlyOverTimes = function(coords, callback) {
-  // define array to push the risetime and duration obj to
-  let data = [];
+  // define var to assign array of objects to
+  let data = '';
 
   // use request to get risetime and duration from iss
   const url = `https://iss-flyover.herokuapp.com/json/?lat=${coords.latitude}&lon=${coords.longitude}`;
@@ -113,13 +113,13 @@ const fetchISSFlyOverTimes = function(coords, callback) {
     const parsedBody = JSON.parse(body);
 
     // push the risetime and duration object to the data array
-    data.push(parsedBody.response);
+    data = parsedBody.response;
 
     // call the callback function with null for err and the data object as args
     callback(null, data);
 
   }); 
-  
+
 };
 
 module.exports = {
