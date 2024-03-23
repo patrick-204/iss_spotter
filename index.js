@@ -1,33 +1,29 @@
-// index.js
-// const { fetchMyIP } = require('./iss');
-const { fetchMyIP, fetchCoordsByIP, fetchISSFlyOverTimes } = require('./iss');
+const { nextISSTimesForMyLocation } = require('./iss');
 
-// call function to fetch IP
-fetchMyIP((error, ip) => {
-  if (error) {
-    console.log("It didn't work!" , error);
-    return;
+/**
+ * Input:
+ *   Array of data objects defining the next fly-overs of the ISS.
+ *   [ { risetime: <number>, duration: <number> }, ... ]
+ * Returns:
+ *   undefined
+ * Sideffect:
+ *   Console log messages to make that data more human readable.
+ *   Example output:
+ *   Next pass at Mon Jun 10 2019 20:11:44 GMT-0700 (Pacific Daylight Time) for 468 seconds!
+ */
+const issPassTimes = function(passTimes) {
+  for (const pass of passTimes) {
+    const dateTime = new Date(0);
+    dateTime.setUTCSeconds(pass.risetime);
+    const duration = pass.duration;
+    console.log(`Next pass at ${dateTime} for ${duration} seconds!`);
   }
+};
 
-  console.log('It worked! Returned IP:' , ip);
-});
-
-// call function to get coordinates of IP
-fetchCoordsByIP('24.150.7.31', (error, coordinates) => {
+nextISSTimesForMyLocation((error, passTimes) => {
   if (error) {
-    console.log("Coudln't get Coordinates" , error);
-    return;
+    return console.log("It didn't work!", error);
   }
-
-  console.log('It worked! Returned coordinates:' , coordinates);
-});
-
-// get the iss flyover time and duration
-fetchISSFlyOverTimes({ latitude: 43.3255196, longitude: -79.7990319 }, (error, riseTimeAndDuration) => {
-  if (error) {
-    console.log("Coudln't iss data" , error);
-    return;
-  }
-
-  console.log('It worked! Returned flyover time and duration:' , riseTimeAndDuration);
+  // success
+  issPassTimes(passTimes);
 });
