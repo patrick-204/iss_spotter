@@ -56,22 +56,21 @@ const fetchCoordsByIP = function(ip, callback) {
       return;
     }
 
-    const coordKeys = Object.keys(JSON.parse(body));
-    const coordVals = Object.values(JSON.parse(body));
+    // parse the body
+    const parsedBody = JSON.parse(body);
+
+    // if parsing the body of the response isn't successful then throw error msg and error
+    if (!parsedBody.success) {
+      const message = `Success status was ${parsedBody.success}. Server message says: ${parsedBody.message} when fetching for IP ${parsedBody.ip}`;
+      callback(Error(message), null);
+      return;
+    } 
 
     // find the latitude and set latitude property
-    for (let item in coordKeys) {
-      if (coordKeys[item] === 'latitude') {
-        data.latitude = coordVals[item];
-      }
-    }
+    data.latitude = parsedBody.latitude;
 
     // find the longitude and set longitude property
-    for (let item in coordKeys) {
-      if (coordKeys[item] === 'longitude') {
-        data.longitude = coordVals[item];
-      }
-    }
+    data.longitude = parsedBody.longitude;
 
     // call the callback function with null for err and the data object as args
     callback(null, data);
